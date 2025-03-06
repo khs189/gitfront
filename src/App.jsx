@@ -6,7 +6,7 @@ import ManageSurvey from './pages/ManageSurvey';
 
 function App() {
   return (
-    <Router>
+    <Router basename="/gitfront">
       <Routes>
         <Route path="/" element={<Home />} />
         <Route path="/create-survey" element={<SurveyForm />} />
