@@ -2,11 +2,13 @@ import { useEffect, useState } from 'react';
 import axios from 'axios';
 import { Link } from 'react-router-dom';
 
+const API_BASE_URL = import.meta.env.VITE_API_URL + "/api";
+
 function Home() {
   const [surveys, setSurveys] = useState([]);
 
   useEffect(() => {
-    axios.get('http://localhost:5000/api/surveys')
+    axios.get(`${API_BASE_URL}/surveys`)
       .then(response => setSurveys(response.data))
       .catch(error => console.error('Error fetching surveys:', error));
   }, []);

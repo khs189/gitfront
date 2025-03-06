@@ -2,6 +2,8 @@ import { useState } from 'react';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
 
+const API_BASE_URL = import.meta.env.VITE_API_URL + "/api";
+
 function SurveyForm() {
   const [surveyName, setSurveyName] = useState('');
   const navigate = useNavigate();
@@ -13,7 +15,7 @@ function SurveyForm() {
     }
 
     try {
-      await axios.post('http://localhost:5000/api/surveys', { survey_name: surveyName });
+      await axios.post(`${API_BASE_URL}/surveys`, { survey_name: surveyName });
       alert('설문이 생성되었습니다.');
       navigate('/');
     } catch (error) {

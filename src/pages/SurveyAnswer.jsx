@@ -2,6 +2,8 @@ import { useEffect, useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import axios from 'axios';
 
+const API_BASE_URL = import.meta.env.VITE_API_URL + "/api";
+
 function SurveyAnswer() {
   const { surveyName } = useParams();
   const navigate = useNavigate();
@@ -11,7 +13,7 @@ function SurveyAnswer() {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    axios.get(`http://localhost:5000/api/survey/${surveyName}`)
+    axios.get(`${API_BASE_URL}/survey/${surveyName}`)
       .then(response => {
         setQuestions(response.data);
         setLoading(false);
@@ -33,7 +35,7 @@ function SurveyAnswer() {
 
   const handleSubmit = async () => {
     try {
-      await axios.post('http://localhost:5000/api/survey/answers', {
+      await axios.post(`${API_BASE_URL}/survey/answers`, {
         survey_name: surveyName,
         answers: Object.entries(answers).map(([id, user_answer]) => ({
           question_id: id,

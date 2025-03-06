@@ -22,7 +22,7 @@ function ManageSurvey() {
 
   // 기존 질문 목록 불러오기
   useEffect(() => {
-    axios.get(`http://localhost:5000/api/survey/${surveyName}/questions`)
+    axios.get(`${API_BASE_URL}/survey/${surveyName}/questions`)
       .then(response => setQuestions(response.data))
       .catch(error => console.error('질문 목록 불러오기 실패:', error));
   }, [surveyName]);
@@ -51,12 +51,12 @@ function ManageSurvey() {
     }
 
     try {
-      await axios.post(`http://localhost:5000/api/survey/${surveyName}/add-question`, question);
+      await axios.post(`${API_BASE_URL}/survey/${surveyName}/add-question`, question);
       alert('질문이 추가되었습니다.');
       setQuestion({ title: '', image_url: '', response_type: 'text', options: '', max_selections: 1, correct_answer: '' });
 
       // 최신 질문 목록 다시 불러오기
-      axios.get(`http://localhost:5000/api/survey/${surveyName}/questions`)
+      axios.get(`${API_BASE_URL}/survey/${surveyName}/questions`)
         .then(response => setQuestions(response.data));
     } catch (error) {
       alert('질문 추가 실패: ' + error.response?.data?.error);
@@ -74,13 +74,13 @@ function ManageSurvey() {
     if (!editingQuestion) return;
 
     try {
-      await axios.put(`http://localhost:5000/api/survey/${surveyName}/update-question/${editingQuestion.id}`, editingQuestion);
+      await axios.put(`${API_BASE_URL}/survey/${surveyName}/update-question/${editingQuestion.id}`, editingQuestion);
       alert('질문이 수정되었습니다.');
       setIsModalOpen(false);
       setEditingQuestion(null);
 
       // 최신 질문 목록 다시 불러오기
-      axios.get(`http://localhost:5000/api/survey/${surveyName}/questions`)
+      axios.get(`${API_BASE_URL}/survey/${surveyName}/questions`)
         .then(response => setQuestions(response.data));
     } catch (error) {
       alert('질문 수정 실패: ' + error.response?.data?.error);
@@ -92,7 +92,7 @@ function ManageSurvey() {
     if (!window.confirm('정말 삭제하시겠습니까?')) return;
 
     try {
-      await axios.delete(`http://localhost:5000/api/survey/${surveyName}/delete-question/${id}`);
+      await axios.delete(`${API_BASE_URL}/survey/${surveyName}/delete-question/${id}`);
       alert('질문이 삭제되었습니다.');
 
       // 삭제 후 목록 업데이트

@@ -2,12 +2,14 @@ import { useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
 import axios from 'axios';
 
+const API_BASE_URL = import.meta.env.VITE_API_URL + "/api";
+
 function SurveyResults() {
   const { surveyName } = useParams();
   const [responses, setResponses] = useState([]);
 
   useEffect(() => {
-    axios.get(`http://localhost:5000/api/survey/${surveyName}/results`)
+    axios.get(`${API_BASE_URL}/survey/${surveyName}/results`)
       .then(response => setResponses(response.data))
       .catch(error => console.error('설문 결과 불러오기 실패:', error));
   }, [surveyName]);
