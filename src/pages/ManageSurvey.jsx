@@ -46,7 +46,7 @@ function ManageSurvey() {
   };
 
   return (
-    <div className="min-h-screen flex flex-col items-center justify-center w-full">
+    <div className="min-h-screen flex flex-col items-center justify-start w-full overflow-y-auto">
       <h1 className="text-3xl font-bold text-blue-600 mb-6">{surveyName} 질문 관리</h1>
       <div className="w-96 bg-white p-4 shadow-lg rounded-lg mb-6">
         <h2 className="text-xl font-semibold mb-2">기존 질문</h2>
@@ -63,8 +63,8 @@ function ManageSurvey() {
       </div>
 
       {isModalOpen && editingQuestion && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center">
-          <div className="bg-white p-6 rounded-lg shadow-lg w-96">
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center overflow-y-auto">
+          <div className="bg-white p-6 rounded-lg shadow-lg w-96 max-h-[90vh] overflow-y-auto">
             <h2 className="text-xl font-bold mb-4">질문 수정</h2>
             <input type="text" value={editingQuestion.title} onChange={(e) => setEditingQuestion({...editingQuestion, title: e.target.value})} className="w-full p-2 border border-gray-300 rounded-lg mb-2" />
             <button onClick={handleUpdateQuestion} className="w-full px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition">수정하기</button>
