@@ -1,8 +1,22 @@
 #root {
-  max-width: 1280px;
-  margin: 0 auto;
-  padding: 2rem;
+  max-width: 100%;
+  margin: 20px 0;
+  padding: 0;
+  overflow-x: hidden;
   text-align: center;
+}
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+.container {
+  width: 100%;
+  max-width: 1200px; /* 원하는 최대 너비로 설정 */
+  margin: 0 auto; /* 가운데 정렬 */
+  padding: 0 20px; /* 좌우 여백 추가 */
 }
 
 .logo {
