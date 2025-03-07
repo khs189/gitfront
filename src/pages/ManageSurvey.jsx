@@ -139,6 +139,102 @@ function ManageSurvey() {
         )}
       </div>
 
+            {isModalOpen && editingQuestion && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center overflow-y-auto">
+          <div className="bg-white p-6 rounded-lg shadow-lg w-96 max-h-[90vh] overflow-y-auto">
+            <h2 className="text-xl font-bold mb-4">질문 수정</h2>
+
+            <label className="block font-semibold">질문 제목</label>
+            <input
+              type="text"
+              name="title"
+              value={editingQuestion.title}
+              onChange={(e) => setEditingQuestion({ ...editingQuestion, title: e.target.value })}
+              className="w-full p-2 border border-gray-300 rounded-lg mb-2"
+            />
+
+            <label className="block font-semibold">이미지 URL</label>
+            <input
+              type="text"
+              name="image_url"
+              value={editingQuestion.image_url}
+              onChange={(e) => setEditingQuestion({ ...editingQuestion, image_url: e.target.value })}
+              className="w-full p-2 border border-gray-300 rounded-lg mb-2"
+            />
+
+            <label className="block font-semibold">응답 유형</label>
+            <select
+              name="response_type"
+              value={editingQuestion.response_type}
+              onChange={(e) =>
+                setEditingQuestion({
+                  ...editingQuestion,
+                  response_type: e.target.value,
+                  options: e.target.value === 'text' ? '' : editingQuestion.options,
+                  max_selections: e.target.value === 'checkbox' ? 1 : null
+                })
+              }
+              className="w-full p-2 border border-gray-300 rounded-lg mb-2"
+            >
+              <option value="text">텍스트</option>
+              <option value="radio">라디오 버튼</option>
+              <option value="checkbox">체크박스</option>
+            </select>
+
+            {(editingQuestion.response_type === 'radio' || editingQuestion.response_type === 'checkbox') && (
+              <>
+                <label className="block font-semibold">선택 항목 (콤마로 구분)</label>
+                <input
+                  type="text"
+                  name="options"
+                  value={editingQuestion.options}
+                  onChange={(e) => setEditingQuestion({ ...editingQuestion, options: e.target.value })}
+                  className="w-full p-2 border border-gray-300 rounded-lg mb-2"
+                />
+              </>
+            )}
+
+            {editingQuestion.response_type === 'checkbox' && (
+              <>
+                <label className="block font-semibold">최대 선택 가능 개수</label>
+                <input
+                  type="number"
+                  name="max_selections"
+                  value={editingQuestion.max_selections}
+                  onChange={(e) => setEditingQuestion({ ...editingQuestion, max_selections: e.target.value })}
+                  min="1"
+                  className="w-full p-2 border border-gray-300 rounded-lg mb-2"
+                />
+              </>
+            )}
+
+            <label className="block font-semibold">정답</label>
+            <input
+              type="text"
+              name="correct_answer"
+              value={editingQuestion.correct_answer}
+              onChange={(e) => setEditingQuestion({ ...editingQuestion, correct_answer: e.target.value })}
+              className="w-full p-2 border border-gray-300 rounded-lg mb-2"
+            />
+
+            <button
+              onClick={handleUpdateQuestion}
+              className="w-full px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition"
+            >
+              수정하기
+            </button>
+
+            <button
+              onClick={() => setIsModalOpen(false)}
+              className="w-full px-4 py-2 mt-2 bg-gray-500 text-white rounded-lg hover:bg-gray-600 transition"
+            >
+              취소
+            </button>
+          </div>
+        </div>
+      )}
+
+
       {/* 새로운 질문 추가 */}
       <div className="w-96 bg-white p-4 shadow-lg rounded-lg">
         <h2 className="text-xl font-semibold mb-2">새 질문 추가</h2>
