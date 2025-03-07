@@ -14,7 +14,7 @@ function Home() {
   }, []);
 
   return (
-    <div className="min-h-screen flex flex-col items-center justify-center w-full container">
+    <div className="min-h-screen flex flex-col items-center justify-center w-full">
 
       <h1 className="text-3xl font-bold text-blue-600 mb-6">설문 목록</h1>
       <ul className="w-80 bg-white p-4 shadow-lg rounded-lg">
