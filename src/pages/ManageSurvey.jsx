@@ -34,25 +34,22 @@ function ManageSurvey() {
 
   // 응답 유형 변경 시 `options`, `max_selections` 초기화
   const handleResponseTypeChange = (e) => {
-    const handleResponseTypeChange = (e) => {
-      const responseType = e.target.value;
-      if (editingQuestion) {
-        setEditingQuestion({
-          ...editingQuestion,
-          response_type: responseType,
-          options: responseType === 'text' ? '' : editingQuestion.options,
-          max_selections: responseType === 'checkbox' ? 1 : null
-        });
-      } else {
-        setQuestion({
-          ...question,
-          response_type: responseType,
-          options: responseType === 'text' ? '' : question.options,
-          max_selections: responseType === 'checkbox' ? 1 : null
-        });
-      }
-    };
-    
+    const responseType = e.target.value;
+    if (editingQuestion) {
+      setEditingQuestion({
+        ...editingQuestion,
+        response_type: responseType,
+        options: responseType === 'text' ? '' : editingQuestion.options,
+        max_selections: responseType === 'checkbox' ? 1 : null
+      });
+    } else {
+      setQuestion({
+        ...question,
+        response_type: responseType,
+        options: responseType === 'text' ? '' : question.options,
+        max_selections: responseType === 'checkbox' ? 1 : null
+      });
+    }
   };
 
   // 질문 추가
@@ -151,7 +148,8 @@ function ManageSurvey() {
         )}
       </div>
 
-            {isModalOpen && editingQuestion && (
+      {/* 수정 모달 */}
+      {isModalOpen && editingQuestion && (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center overflow-y-auto">
           <div className="bg-white p-6 rounded-lg shadow-lg w-96 max-h-[90vh] overflow-y-auto">
             <h2 className="text-xl font-bold mb-4">질문 수정</h2>
@@ -245,7 +243,6 @@ function ManageSurvey() {
           </div>
         </div>
       )}
-
 
       {/* 새로운 질문 추가 */}
       <div className="w-96 bg-white p-4 shadow-lg rounded-lg">
