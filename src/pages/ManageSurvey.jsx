@@ -34,13 +34,25 @@ function ManageSurvey() {
 
   // 응답 유형 변경 시 `options`, `max_selections` 초기화
   const handleResponseTypeChange = (e) => {
-    const responseType = e.target.value;
-    setQuestion({
-      ...question,
-      response_type: responseType,
-      options: responseType === 'text' ? '' : question.options,
-      max_selections: responseType === 'checkbox' ? 1 : null
-    });
+    const handleResponseTypeChange = (e) => {
+      const responseType = e.target.value;
+      if (editingQuestion) {
+        setEditingQuestion({
+          ...editingQuestion,
+          response_type: responseType,
+          options: responseType === 'text' ? '' : editingQuestion.options,
+          max_selections: responseType === 'checkbox' ? 1 : null
+        });
+      } else {
+        setQuestion({
+          ...question,
+          response_type: responseType,
+          options: responseType === 'text' ? '' : question.options,
+          max_selections: responseType === 'checkbox' ? 1 : null
+        });
+      }
+    };
+    
   };
 
   // 질문 추가
