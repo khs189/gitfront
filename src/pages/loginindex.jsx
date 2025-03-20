@@ -16,21 +16,29 @@ function LoginIndex() {
       alert('성명을 입력하세요.');
       return;
     }
-
     if (!loginBirth.trim()) {
       alert('생년월일을 입력하세요.');
       return;
     }
-
     if (!loginCon.trim()) {
       alert('핸드폰 번호를 입력하세요.');
       return;
     }
 
     try {
-      await axios.post(`${API_BASE_URL}/login`, { survey_name: loginName });
+      // API endpoint와 payload 수정
+      const response = await axios.post(`${API_BASE_URL}/survey_login`, {
+        name: loginName,
+        birth: loginBirth,
+        phone: loginCon
+      });
+      
+      // 로그인 성공 시 받은 유저 정보를 변수에 저장하거나, 필요 시 상태관리(store, context 등)에 저장
+      const userData = response.data.user;
       alert('로그인에 성공하였습니다.');
-      navigate('/home');
+      
+      // 예: navigate 시 state를 함께 전달 (home.jsx에서 location.state로 접근 가능)
+      navigate('/home', { state: { user: userData } });
     } catch (error) {
       alert('로그인 실패: ' + error.response?.data?.error);
     }
@@ -54,14 +62,17 @@ function LoginIndex() {
         className="w-60 p-2 border border-gray-300 rounded-lg mb-4"
       />      
       <input 
-      type="text" 
-      placeholder="핸드폰 번호 (ex. 01012345678)" 
-      value={loginCon} 
-      onChange={(e) => setloginCon(e.target.value)}
-      className="w-60 p-2 border border-gray-300 rounded-lg mb-4"
-    />
+        type="text" 
+        placeholder="핸드폰 번호 (ex. 01012345678)" 
+        value={loginCon} 
+        onChange={(e) => setloginCon(e.target.value)}
+        className="w-60 p-2 border border-gray-300 rounded-lg mb-4"
+      />
       
-      <button onClick={handleCreateSurvey} className="px-6 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition">
+      <button 
+        onClick={handleCreateSurvey} 
+        className="px-6 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition"
+      >
         로그인하기
       </button>
     </div>
