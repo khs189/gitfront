@@ -44,9 +44,26 @@ function LoginIndex() {
     }
   };
 
+    // 함수 이름 수정 없이
+    const MoveHome = async () => {
+      alert('로그인에 성공하였습니다.');
+      navigate('/home');
+    };
+
+
+
+
   return (
     <div className="min-h-screen flex flex-col items-center justify-center">
+      <button 
+        onClick={MoveHome} 
+        className="px-6 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition"
+      >
+        임시
+      </button><br/>  
       <h1 className="text-3xl font-bold text-blue-600 mb-6">설문조사 로그인</h1>
+        {/* // 버튼에서 함수 이름 일치 */}
+
       <input 
         type="text" 
         placeholder="성명 (ex. 홍길동)" 

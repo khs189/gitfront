@@ -12,6 +12,10 @@ function SurveyAnswer() {
   const [answers, setAnswers] = useState({});
   const [loading, setLoading] = useState(true);
 
+  // 모달 상태
+  const [modalOpen, setModalOpen] = useState(false);
+  const [modalImage, setModalImage] = useState('');
+
   // options가 문자열이면 배열로 변환, 이미 배열이면 그대로 반환
   const parseOptions = (options) => {
     if (!options) return [];
@@ -31,7 +35,35 @@ function SurveyAnswer() {
       .catch(error => console.error('Error fetching survey questions:', error));
   }, [surveyName]);
 
+  // 현재 질문에 대한 응답 유효성 검사 함수
+  const validateAnswer = () => {
+    const currentQuestion = questions[currentIndex];
+    const currentAnswer = answers[currentQuestion.id] || {};
+
+    if (currentQuestion.response_type === 'radio') {
+      // 라디오: 반드시 값이 선택되어야 함
+      if (!currentAnswer.user_answer) {
+        return false;
+      }
+    } else if (currentQuestion.response_type === 'checkbox') {
+      // 체크박스: 배열이고, 선택된 항목 수가 정해진 숫자만큼 되어야 함
+      if (!Array.isArray(currentAnswer.user_answer) || currentAnswer.user_answer.length < currentQuestion.max_selections) {
+        return false;
+      }
+    } else {
+      // 텍스트 등의 경우: 입력 값이 비어있으면 안 됨
+      if (!currentAnswer.user_answer || currentAnswer.user_answer.trim() === "") {
+        return false;
+      }
+    }
+    return true;
+  };
+
   const handleNext = () => {
+    if (!validateAnswer()) {
+      alert("선택이 완료되어야 다음으로 넘어갈 수 있습니다.");
+      return;
+    }
     if (currentIndex < questions.length - 1) {
       setCurrentIndex(currentIndex + 1);
     }
@@ -44,6 +76,11 @@ function SurveyAnswer() {
   };
 
   const handleSubmit = async () => {
+    // 마지막 질문도 검증
+    if (!validateAnswer()) {
+      alert("선택이 완료되어야 다음으로 넘어갈 수 있습니다.");
+      return;
+    }
     try {
       await axios.post(`${API_BASE_URL}/survey/answers`, {
         survey_name: surveyName,
@@ -71,11 +108,17 @@ function SurveyAnswer() {
     <div className="min-h-screen flex flex-col items-center justify-center p-4">
       <h1 className="text-3xl font-bold text-blue-600 mb-6">{surveyName} 설문</h1>
       <p className="text-lg font-medium mb-4">{currentQuestion.title}</p>
+      
+      {/* 이미지가 있을 경우, 클릭 시 모달 열기 */}
       {currentQuestion.image_url && (
         <img 
           src={currentQuestion.image_url} 
           alt="question" 
-          className="w-60 h-auto my-4" 
+          className="w-60 h-auto my-4 cursor-pointer"
+          onClick={() => {
+            setModalImage(currentQuestion.image_url);
+            setModalOpen(true);
+          }}
         />
       )}
       
@@ -191,6 +234,18 @@ function SurveyAnswer() {
           </button>
         )}
       </div>
+
+      {/* 모달: 이미지 확대보기 */}
+      {modalOpen && (
+        <div 
+          className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-75 z-50"
+          onClick={() => setModalOpen(false)}
+        >
+          <div className="relative">
+            <img src={modalImage} alt="Enlarged" className="max-w-full max-h-screen" />
+          </div>
+        </div>
+      )}
     </div>
   );
 }
