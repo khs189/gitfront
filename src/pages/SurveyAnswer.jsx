@@ -12,6 +12,16 @@ function SurveyAnswer() {
   const [answers, setAnswers] = useState({});
   const [loading, setLoading] = useState(true);
 
+  // options가 문자열이면 배열로 변환, 이미 배열이면 그대로 반환
+  const parseOptions = (options) => {
+    if (!options) return [];
+    if (Array.isArray(options)) return options;
+    if (typeof options === 'string') {
+      return options.split(',').map(opt => opt.trim());
+    }
+    return [];
+  };
+
   useEffect(() => {
     axios.get(`${API_BASE_URL}/survey/${surveyName}`)
       .then(response => {
@@ -37,14 +47,14 @@ function SurveyAnswer() {
     try {
       await axios.post(`${API_BASE_URL}/survey/answers`, {
         survey_name: surveyName,
-        answers: Object.entries(answers).map(([id, user_answer]) => ({
+        answers: Object.entries(answers).map(([id, data]) => ({
           question_id: id,
-          user_answer
+          response_type: data.response_type,
+          user_answer: data.user_answer
         }))
       });
-
       alert('응답이 저장되었습니다.');
-      navigate(`/survey/${surveyName}/results`); // 설문 결과 페이지로 이동
+      navigate(`/survey/${surveyName}/results`);
     } catch (error) {
       alert('응답 저장 실패: ' + error.response?.data?.error);
     }
@@ -54,32 +64,129 @@ function SurveyAnswer() {
   if (questions.length === 0) return <p className="text-center">질문이 없습니다.</p>;
 
   const currentQuestion = questions[currentIndex];
+  const optionsArray = parseOptions(currentQuestion.options);
+  const currentAnswer = answers[currentQuestion.id] || {};
 
   return (
-    <div className="min-h-screen flex flex-col items-center justify-center">
+    <div className="min-h-screen flex flex-col items-center justify-center p-4">
       <h1 className="text-3xl font-bold text-blue-600 mb-6">{surveyName} 설문</h1>
-      <p className="text-lg font-medium">{currentQuestion.title}</p>
-      {currentQuestion.image_url && <img src={currentQuestion.image_url} alt="question" className="w-60 h-auto my-4" />}
+      <p className="text-lg font-medium mb-4">{currentQuestion.title}</p>
+      {currentQuestion.image_url && (
+        <img 
+          src={currentQuestion.image_url} 
+          alt="question" 
+          className="w-60 h-auto my-4" 
+        />
+      )}
       
-      {/* 응답 입력 */}
-      <input 
-        type="text" 
-        placeholder="답변을 입력하세요" 
-        value={answers[currentQuestion.id] || ''} 
-        onChange={(e) => setAnswers({ ...answers, [currentQuestion.id]: e.target.value })}
-        className="w-80 p-2 border border-gray-300 rounded-lg mb-4"
-      />
+      {/* radio 유형: 옵션 리스트 보여주기 */}
+      {currentQuestion.response_type === 'radio' && optionsArray.length > 0 && (
+        <div className="mb-4">
+          {optionsArray.map((option, index) => (
+            <label key={index} className="block mb-1">
+              <input 
+                type="radio"
+                name={`question_${currentQuestion.id}`}
+                value={option}
+                checked={currentAnswer.user_answer === option}
+                onChange={(e) =>
+                  setAnswers({
+                    ...answers,
+                    [currentQuestion.id]: {
+                      response_type: currentQuestion.response_type,
+                      user_answer: e.target.value
+                    }
+                  })
+                }
+                className="mr-2"
+              />
+              {option}
+            </label>
+          ))}
+        </div>
+      )}
+      
+      {/* checkbox 유형: 옵션 리스트 보여주기 (max_selections 제한 적용) */}
+      {currentQuestion.response_type === 'checkbox' && optionsArray.length > 0 && (
+        <div className="mb-4">
+          {optionsArray.map((option, index) => {
+            const currentSelections = Array.isArray(currentAnswer.user_answer) ? currentAnswer.user_answer : [];
+            const isChecked = currentSelections.includes(option);
+            return (
+              <label key={index} className="block mb-1">
+                <input 
+                  type="checkbox"
+                  name={`question_${currentQuestion.id}`}
+                  value={option}
+                  checked={isChecked}
+                  onChange={() => {
+                    let newSelections = currentSelections;
+                    if (isChecked) {
+                      newSelections = currentSelections.filter(item => item !== option);
+                    } else {
+                      if (currentSelections.length >= currentQuestion.max_selections) {
+                        alert(`최대 ${currentQuestion.max_selections}개까지 선택할 수 있습니다.`);
+                        return;
+                      }
+                      newSelections = [...currentSelections, option];
+                    }
+                    setAnswers({
+                      ...answers,
+                      [currentQuestion.id]: {
+                        response_type: currentQuestion.response_type,
+                        user_answer: newSelections
+                      }
+                    });
+                  }}
+                  className="mr-2"
+                />
+                {option}
+              </label>
+            );
+          })}
+        </div>
+      )}
+      
+      {/* 텍스트 입력: radio, checkbox가 아닌 경우 */}
+      {currentQuestion.response_type !== 'radio' &&
+        currentQuestion.response_type !== 'checkbox' && (
+          <input 
+            type="text" 
+            placeholder="답변을 입력하세요" 
+            value={currentAnswer.user_answer || ''} 
+            onChange={(e) =>
+              setAnswers({
+                ...answers,
+                [currentQuestion.id]: {
+                  response_type: currentQuestion.response_type,
+                  user_answer: e.target.value
+                }
+              })
+            }
+            className="w-80 p-2 border border-gray-300 rounded-lg mb-4"
+          />
+      )}
 
       <div className="flex gap-4">
-        <button onClick={handlePrev} disabled={currentIndex === 0} className="px-6 py-2 bg-gray-400 text-white rounded-lg">
+        <button 
+          onClick={handlePrev} 
+          disabled={currentIndex === 0} 
+          className="px-6 py-2 bg-gray-400 text-white rounded-lg"
+        >
           이전
         </button>
         {currentIndex < questions.length - 1 ? (
-          <button onClick={handleNext} className="px-6 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600">
+          <button 
+            onClick={handleNext} 
+            className="px-6 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600"
+          >
             다음
           </button>
         ) : (
-          <button onClick={handleSubmit} className="px-6 py-2 bg-green-500 text-white rounded-lg hover:bg-green-600">
+          <button 
+            onClick={handleSubmit} 
+            className="px-6 py-2 bg-green-500 text-white rounded-lg hover:bg-green-600"
+          >
             제출
           </button>
         )}

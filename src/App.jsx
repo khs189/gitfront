@@ -4,6 +4,8 @@ import Home from './pages/Home';
 import SurveyForm from './pages/SurveyForm';
 import SurveyAnswer from './pages/SurveyAnswer';
 import ManageSurvey from './pages/ManageSurvey';
+import SurveyResults from './pages/SurveyResults';
+
 
 function App() {
 
@@ -15,6 +17,7 @@ function App() {
         <Route path="/create-survey" element={<SurveyForm />} />
         <Route path="/survey/:surveyName" element={<SurveyAnswer />} />
         <Route path="/manage-survey/:surveyName" element={<ManageSurvey />} />
+        <Route path="/survey/:surveyName/results" element={<SurveyResults />} />
       </Routes>
     </BrowserRouter>
   );

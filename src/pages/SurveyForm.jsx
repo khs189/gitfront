@@ -17,7 +17,7 @@ function SurveyForm() {
     try {
       await axios.post(`${API_BASE_URL}/surveys`, { survey_name: surveyName });
       alert('설문이 생성되었습니다.');
-      navigate('/');
+      navigate('/home');
     } catch (error) {
       alert('설문 생성 실패: ' + error.response?.data?.error);
     }

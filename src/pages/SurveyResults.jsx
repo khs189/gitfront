@@ -22,8 +22,12 @@ function SurveyResults() {
           <ul>
             {responses.map((response, index) => (
               <li key={index} className="border-b last:border-none p-2">
-                <p className="font-semibold">{index + 1}. {response.question}</p>
-                <p className="text-gray-600">답변: {response.user_answer}</p>
+                <p className="font-semibold">
+                  {index + 1}. {response.question}
+                </p>
+                <p className="text-gray-600">
+                  답변: {response.user_answer}
+                </p>
               </li>
             ))}
           </ul>

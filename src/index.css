@@ -1,3 +1,13 @@
+/* 세로 중앙 정렬까지 원하는 경우 (flexbox 사용) */
+html,
+body,
+#root {
+  height: 100%;
+  margin: 0;
+  justify-content: center; /* 가로 중앙 */
+  align-items: center; /* 세로 중앙 */
+}
+
 :root {
   font-family: system-ui, Avenir, Helvetica, Arial, sans-serif;
   line-height: 1.5;
