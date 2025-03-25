@@ -1,19 +1,17 @@
-// SurveyAnswer.jsx
-import { useEffect, useState } from 'react';
-import { useParams, useNavigate } from 'react-router-dom';
-import axios from 'axios';
+// ReviseAnswer.jsx
+import { useState } from 'react';
+import { useParams, useNavigate, useLocation } from 'react-router-dom';
 
-const API_BASE_URL = import.meta.env.VITE_API_URL + "/api";
-
-function SurveyAnswer() {
+function ReviseAnswer() {
   const { surveyName } = useParams();
   const navigate = useNavigate();
-  const [questions, setQuestions] = useState([]);
+  const { state } = useLocation();
+  // 이전에 선택한 답변들이 이미 전달되었다고 가정
+  const [questions] = useState(state?.questions || []);
+  const [answers, setAnswers] = useState(state?.answers || {});
   const [currentIndex, setCurrentIndex] = useState(0);
-  const [answers, setAnswers] = useState({});
-  const [loading, setLoading] = useState(true);
-  
-  // options가 문자열이면 배열로 변환
+
+  // SurveyAnswer.jsx와 동일하게 options를 파싱하는 함수
   const parseOptions = (options) => {
     if (!options) return [];
     if (Array.isArray(options)) return options;
@@ -23,35 +21,15 @@ function SurveyAnswer() {
     return [];
   };
 
-  useEffect(() => {
-    axios.get(`${API_BASE_URL}/survey/${surveyName}`)
-      .then(response => {
-        setQuestions(response.data);
-        setLoading(false);
-      })
-      .catch(error => console.error('Error fetching survey questions:', error));
-  }, [surveyName]);
+  if (!questions.length) {
+    return <p className="text-center">수정할 질문이 없습니다.</p>;
+  }
 
-  // 현재 질문에 대한 응답 유효성 검사
-  const validateAnswer = () => {
-    const currentQuestion = questions[currentIndex];
-    const currentAnswer = answers[currentQuestion.id] || {};
-
-    if (currentQuestion.response_type === 'radio') {
-      if (!currentAnswer.user_answer) return false;
-    } else if (currentQuestion.response_type === 'checkbox') {
-      if (!Array.isArray(currentAnswer.user_answer) || currentAnswer.user_answer.length < currentQuestion.max_selections) return false;
-    } else {
-      if (!currentAnswer.user_answer || currentAnswer.user_answer.trim() === "") return false;
-    }
-    return true;
-  };
+  const currentQuestion = questions[currentIndex];
+  const optionsArray = parseOptions(currentQuestion.options);
+  const currentAnswer = answers[currentQuestion.id] || {};
 
   const handleNext = () => {
-    if (!validateAnswer()) {
-      alert("답변을 완료해야 다음으로 넘어갈 수 있습니다.");
-      return;
-    }
     if (currentIndex < questions.length - 1) {
       setCurrentIndex(currentIndex + 1);
     }
@@ -63,26 +41,14 @@ function SurveyAnswer() {
     }
   };
 
-  // 마지막 질문에서는 바로 서버 전송하지 않고 미리보기 페이지로 state 전달
+  // 미리보기 페이지로 수정된 답변들을 전달
   const handlePreview = () => {
-    // 모든 질문에 대한 답변 검증
-    if (Object.keys(answers).length !== questions.length) {
-      alert("모든 질문에 답변해주세요.");
-      return;
-    }
     navigate(`/survey/${surveyName}/preview`, { state: { surveyName, questions, answers } });
   };
 
-  if (loading) return <p className="text-center">로딩 중...</p>;
-  if (questions.length === 0) return <p className="text-center">질문이 없습니다.</p>;
-
-  const currentQuestion = questions[currentIndex];
-  const optionsArray = parseOptions(currentQuestion.options);
-  const currentAnswer = answers[currentQuestion.id] || {};
-
   return (
     <div className="min-h-screen flex flex-col items-center justify-center p-4 m-2">
-      <h1 className="text-3xl font-bold text-blue-600 mb-6">{surveyName} 설문</h1>
+      <h1 className="text-3xl font-bold text-blue-600 mb-6">{surveyName} - 답변 수정</h1>
       <p className="text-lg font-medium mb-4">{currentQuestion.title}</p>
       
       {/* 질문 이미지 (있을 경우) */}
@@ -91,7 +57,6 @@ function SurveyAnswer() {
           src={currentQuestion.image_url} 
           alt="question" 
           className="w-60 h-auto my-4 cursor-pointer"
-          onClick={() => {}}
         />
       )}
       
@@ -202,7 +167,7 @@ function SurveyAnswer() {
             onClick={handlePreview} 
             className="px-6 py-2 bg-green-500 text-white rounded-lg hover:bg-green-600"
           >
-            설문완료
+            미리보기
           </button>
         )}
       </div>
@@ -210,4 +175,4 @@ function SurveyAnswer() {
   );
 }
 
-export default SurveyAnswer;
+export default ReviseAnswer;

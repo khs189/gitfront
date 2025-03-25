@@ -8,6 +8,21 @@ body,
   align-items: center; /* 세로 중앙 */
 }
 
+/* 예: styles.css 또는 전역 CSS 파일에 추가 */
+.custom-scrollbar::-webkit-scrollbar {
+  width: 30px; /* 스크롤바 너비를 늘림 */
+}
+
+.custom-scrollbar::-webkit-scrollbar-track {
+  background: #f1f1f1;
+}
+
+.custom-scrollbar::-webkit-scrollbar-thumb {
+  background-color: #888;
+  border-radius: 10px;
+  border: 3px solid #f1f1f1;
+}
+
 :root {
   font-family: system-ui, Avenir, Helvetica, Arial, sans-serif;
   line-height: 1.5;

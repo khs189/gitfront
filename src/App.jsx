@@ -4,7 +4,9 @@ import Home from './pages/Home';
 import SurveyForm from './pages/SurveyForm';
 import SurveyAnswer from './pages/SurveyAnswer';
 import ManageSurvey from './pages/ManageSurvey';
-import SurveyResults from './pages/SurveyResults';
+import SurveyPreview from './pages/SurveyPreview';
+import ReviseAnswer from './pages/ReviseAnswer';
+import SurveyResultDownload from './pages/SurveyResultDownload';
 
 
 function App() {
@@ -17,7 +19,9 @@ function App() {
         <Route path="/create-survey" element={<SurveyForm />} />
         <Route path="/survey/:surveyName" element={<SurveyAnswer />} />
         <Route path="/manage-survey/:surveyName" element={<ManageSurvey />} />
-        <Route path="/survey/:surveyName/results" element={<SurveyResults />} />
+        <Route path="/survey/:surveyName/preview" element={<SurveyPreview />} />
+        <Route path="/survey/:surveyName/revise" element={<ReviseAnswer />} />
+        <Route path="/survey/:surveyName/results" element={<SurveyResultDownload />} />
       </Routes>
     </BrowserRouter>
   );
