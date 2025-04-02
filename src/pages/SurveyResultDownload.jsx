@@ -45,6 +45,7 @@ function SurveyResultDownload() {
           {questions.map((question) => (
             <div key={question.id} className="mb-6 border-b border-gray-300 pb-4">
               <h3 className="font-medium mb-2">{question.title}</h3>
+              <h3 className="font-medium mb-2">{question.subtitle}</h3>
               {question.image_url && (
                 <img
                   src={question.image_url}

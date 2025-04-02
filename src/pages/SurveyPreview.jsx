@@ -41,9 +41,10 @@ function SurveyPreview() {
       <h1 className="text-3xl font-bold text-blue-600 mb-6">{surveyName} - 답변 미리보기</h1>
       {questions.map((question) => (
         <div key={question.id} className="mb-4 p-4 border border-gray-300 rounded">
-          <h2 className="font-medium">{question.title}</h2>
+          <h2 className="font-medium">◆ {question.title}</h2>
+          <h2 className="font-medium">- {question.subtitle}</h2>
           <p>
-            답변:{" "}
+            답변 : {" "}
             {answers[question.id] && answers[question.id].user_answer ? (
               Array.isArray(answers[question.id].user_answer) ? 
                 answers[question.id].user_answer.join(", ") : 

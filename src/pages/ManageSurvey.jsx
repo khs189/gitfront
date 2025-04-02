@@ -11,6 +11,7 @@ function ManageSurvey() {
   const [questions, setQuestions] = useState([]);
   const [question, setQuestion] = useState({
     title: '',
+    subtitle: '',
     image_url: '',
     response_type: 'text',
     options: '',
@@ -73,6 +74,7 @@ function ManageSurvey() {
       alert('질문이 추가되었습니다.');
       setQuestion({
         title: '',
+        subtitle: '',
         image_url: '',
         response_type: 'text',
         options: '',
@@ -207,7 +209,8 @@ function ManageSurvey() {
           <ul>
             {questions.map(q => (
               <li key={q.id} className="border-b last:border-none p-2">
-                <p className="font-semibold">{q.title}</p>
+                <p className="font-bold text-red-800">◆ 제목 : {q.title}</p>
+                <p className="font-semibold text-blue-800">- 부제 : {q.subtitle}</p>
                 {q.image_url && (
                   <img
                     src={q.image_url}
@@ -263,6 +266,15 @@ function ManageSurvey() {
               name="title"
               value={editingQuestion.title}
               onChange={(e) => setEditingQuestion({ ...editingQuestion, title: e.target.value })}
+              className="w-full p-2 border border-gray-300 rounded-lg mb-2"
+            />
+
+            <label className="block font-semibold">질문 부제목</label>
+            <input
+              type="text"
+              name="subtitle"
+              value={editingQuestion.subtitle}
+              onChange={(e) => setEditingQuestion({ ...editingQuestion, subtitle: e.target.value })}
               className="w-full p-2 border border-gray-300 rounded-lg mb-2"
             />
 
@@ -356,6 +368,15 @@ function ManageSurvey() {
           type="text"
           name="title"
           value={question.title}
+          onChange={handleChange}
+          className="w-full p-2 border border-gray-300 rounded-lg mb-2"
+        />
+
+        <label className="block font-semibold">질문 부제목</label>
+        <input
+          type="text"
+          name="subtitle"
+          value={question.subtitle}
           onChange={handleChange}
           className="w-full p-2 border border-gray-300 rounded-lg mb-2"
         />

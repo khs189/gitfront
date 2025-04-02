@@ -50,6 +50,7 @@ function ReviseAnswer() {
     <div className="min-h-screen flex flex-col items-center justify-center p-4 m-2">
       <h1 className="text-3xl font-bold text-blue-600 mb-6">{surveyName} - 답변 수정</h1>
       <p className="text-lg font-medium mb-4">{currentQuestion.title}</p>
+      <p className="text-lg font-medium mb-4">{currentQuestion.subtitle}</p>
       
       {/* 질문 이미지 (있을 경우) */}
       {currentQuestion.image_url && (
