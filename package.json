@@ -3,7 +3,7 @@
   "private": true,
   "version": "0.0.0",
   "type": "module",
-  "homepage": "https://<GitHub 사용자명>.github.io/<Repository 이름>",
+  "homepage": "https://khs189.github.io/gitfront",
   "description": "Sfront is a web-based front-end application for managing and visualizing data.",
   "scripts": {
     "dev": "vite --host",
