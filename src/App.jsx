@@ -12,7 +12,7 @@ import SurveyResultDownload from './pages/SurveyResultDownload';
 function App() {
 
   return (  
-    <BrowserRouter basename="/gitfront">
+    <BrowserRouter basename="/">
       <Routes>
         <Route path="/" element={<LoginIndex />} />
         <Route path="/home" element={<Home />} />
