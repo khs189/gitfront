@@ -6,6 +6,13 @@ import axios from 'axios';
 const API_BASE_URL = import.meta.env.VITE_API_URL + "/api";
 
 function SurveyAnswer() {
+    // ✅ 힌트보는 함수!
+    const [showHint, setShowHint] = useState(false);
+
+    const toggleHint = () => {
+      setShowHint(prev => !prev);
+    };
+
   const { surveyName } = useParams();
   const navigate = useNavigate();
   const [questions, setQuestions] = useState([]);
@@ -80,11 +87,29 @@ function SurveyAnswer() {
   const optionsArray = parseOptions(currentQuestion.options);
   const currentAnswer = answers[currentQuestion.id] || {};
 
+
   return (
     <div className="min-h-screen flex flex-col items-center justify-center p-4 m-2">
       <h1 className="text-3xl font-bold text-blue-600 mb-6"> {surveyName} </h1>
       <p className="text-lg font-bold mb-4">◆ {currentQuestion.title}</p>
       <p className="text-lg font-medium mb-4">- {currentQuestion.subtitle}</p>
+        <div>
+
+        {/* 버튼으로 토글 */}
+        <button
+          onClick={toggleHint}
+          className="mb-2 px-4 py-2 bg-blue-500 text-white rounded"
+        >
+          {showHint ? "닫기" : "추가 설명"}
+        </button>
+
+        {/* 조건부 렌더링 */}
+        {showHint && (
+          <div className="text-red-700">
+            [ {currentQuestion.correct_answer} ]
+          </div>
+        )}
+      </div>
       
       {/* 질문 이미지 (있을 경우) */}
       {currentQuestion.image_url && (
