@@ -104,7 +104,18 @@ function WordQuizModal({ onClose, user }) {
           <div className="mt-4">
             <div className="p-4 bg-white border border-gray-300 rounded mb-4">
               <p className="text-lg font-semibold">{currentQuestion.title}</p>
+              
               <p className="mb-2 text-gray-600">{currentQuestion.subtitle}</p>
+
+                    {/* 질문 이미지 (있을 경우) */}
+            {currentQuestion.image_url && (
+              <img 
+                src={currentQuestion.image_url} 
+                alt="question" 
+                className="w-60 h-auto my-4 cursor-pointer"
+                onClick={() => {}}
+              />
+            )}
               
               {/* 옵션 버튼 (라디오 버튼 형식 대신 버튼 형태로 처리) */}
               <div className="flex flex-wrap gap-2 mb-2">

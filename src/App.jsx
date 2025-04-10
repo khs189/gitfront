@@ -1,6 +1,7 @@
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
 import LoginIndex from './pages/loginindex';
 import Home from './pages/Home';
+import Whome from './pages/WordbookHome';
 import SurveyForm from './pages/SurveyForm';
 import SurveyAnswer from './pages/SurveyAnswer';
 import ManageSurvey from './pages/ManageSurvey';
@@ -16,6 +17,9 @@ function App() {
       <Routes>
         <Route path="/" element={<LoginIndex />} />
         <Route path="/home" element={<Home />} />
+        <Route path="/whome" element={<Whome />} />
+        <Route path="/login" element={<LoginIndex />} />
+        <Route path="/wordbook" element={<wHome />} />
         <Route path="/create-survey" element={<SurveyForm />} />
         <Route path="/survey/:surveyName" element={<SurveyAnswer />} />
         <Route path="/manage-survey/:surveyName" element={<ManageSurvey />} />
