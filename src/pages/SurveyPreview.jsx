@@ -44,7 +44,7 @@ function SurveyPreview() {
           <h2 className="font-medium">◆ {question.title}</h2>
           <h2 className="font-medium">- {question.subtitle}</h2>
           <p>
-            답변 : {" "}
+            ▶ 선택 답변 : {" "}
             {answers[question.id] && answers[question.id].user_answer ? (
               Array.isArray(answers[question.id].user_answer) ? 
                 answers[question.id].user_answer.join(", ") : 
@@ -53,6 +53,8 @@ function SurveyPreview() {
               "답변 없음"
             )}
           </p>
+          <h2 className="font-medium">■ 추가 설명 : {question.correct_answer}</h2>
+
         </div>
       ))}
       <div className="flex gap-4">
