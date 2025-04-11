@@ -82,7 +82,7 @@ function WordQuizModal({ onClose, user }) {
         {/* 데이터테이블 선택 영역 (문제가 아직 로딩되지 않은 경우) */}
         {!currentQuestion && (
           <div>
-            <p className="mb-2">사용할 데이터테이블 선택:</p>
+            <p className="mb-2">단어장 선택:</p>
             {availableTables.map(table => (
               <div key={table} className="mb-1">
                 <input
@@ -123,16 +123,6 @@ function WordQuizModal({ onClose, user }) {
                 <div className="p-2 bg-yellow-100 border border-yellow-300 rounded">
                   정답 힌트: {currentQuestion.correct_answer}
                 </div>
-              )}
-
-              {/* 질문 이미지 (있을 경우) */}
-              {currentQuestion.image_url && (
-                <img 
-                  src={currentQuestion.image_url} 
-                  alt="question" 
-                  className="w-60 h-auto my-4 cursor-pointer"
-                  onClick={() => {}}
-                />
               )}
 
               <p className="bg-black text-white text-center">정답 선택</p><br/>

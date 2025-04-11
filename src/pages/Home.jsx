@@ -1,64 +1,60 @@
 import { useState } from 'react';
-
 import WordQuizModal from './WordQuizModal';
+import SsonagiModal from './SsonagiModal'; // 👈 추가
 
 function Home() {
   const [isQuizModalOpen, setQuizModalOpen] = useState(false);
+  const [isSsonagiModalOpen, setSsonagiModalOpen] = useState(false); // 👈 소나기 모달 상태 추가
 
-  const handleOpenQuiz = () => {
-    setQuizModalOpen(true);
-  };
+  const handleOpenQuiz = () => setQuizModalOpen(true);
+  const handleCloseQuiz = () => setQuizModalOpen(false);
+  const handleOpenSsonagi = () => setSsonagiModalOpen(true);
+  const handleCloseSsonagi = () => setSsonagiModalOpen(false);
 
   const JustHome = () => {
-    window.location.href = '/whome'; // Redirect to the WordbookHome component
-  };
-
-  const handleCloseQuiz = () => {
-    setQuizModalOpen(false);
+    window.location.href = '/whome';
   };
 
   return (
     <div className="min-h-screen flex flex-col items-center justify-center p-6">
       <h1 className="text-3xl font-bold mb-6">[ 게임 선택 ]</h1>
-      
-      {/* 소나기 게임 섹션 */}
+
+      {/* 소나기 게임 버튼 */}
       <div className="mb-8 flex flex-col items-center">
-        <img src="https://via.placeholder.com/100" alt="소나기 게임" className="mb-2" />
-        <button className="px-4 py-2 bg-gray-300 rounded" disabled>
+        🌧️
+        <button
+          className="px-4 py-2 bg-indigo-500 text-white rounded hover:bg-indigo-600 transition"
+          onClick={handleOpenSsonagi}
+        >
           소나기 게임
         </button>
       </div>
-      
-      {/* 단어맞추기 게임 섹션 */}
+
+      {/* 단어 맞추기 */}
       <div className="flex flex-col items-center">
-        <img src="https://via.placeholder.com/100" alt="단어 맞추기" className="mb-2" />
-        <button 
+        🆗
+        <button
           className="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600 transition"
           onClick={handleOpenQuiz}
         >
           단어맞추기 게임
-        </button><br/>
-
+        </button>
       </div>
-      
-      {/* 단어맞추기 게임 모달창 */}
-      {isQuizModalOpen && (
-        <WordQuizModal onClose={handleCloseQuiz} />
-      )}
 
-      {/* 단어장장 버튼 */}
-      <div className="flex flex-col items-center">
-       <img src="https://via.placeholder.com/100" alt="단어장" className="mb-2" />
+      {/* 모달들 */}
+      {isQuizModalOpen && <WordQuizModal onClose={handleCloseQuiz} />}
+      {isSsonagiModalOpen && <SsonagiModal onClose={handleCloseSsonagi} />}
 
-        <button 
+      {/* 단어장 */}
+      <div className="flex flex-col items-center mt-6">
+        ✍️
+        <button
           className="px-4 py-2 bg-green-500 text-white rounded hover:bg-green-600 transition"
           onClick={JustHome}
         >
           단어장
         </button>
       </div>
-
-
     </div>
   );
 }
