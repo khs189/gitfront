@@ -12,6 +12,7 @@ function WordQuizModal({ onClose, user }) {
   const [currentQuestion, setCurrentQuestion] = useState(null);
   const [showHint, setShowHint] = useState(false);
   const [feedback, setFeedback] = useState('');
+  const [feedbackType, setFeedbackType] = useState(''); // 새로운 상태 변수 추가
 
   // 테이블 선택 체크박스 토글
   const handleTableSelect = (table) => {
@@ -33,6 +34,7 @@ function WordQuizModal({ onClose, user }) {
       // API로부터 받은 문제 데이터 (예: title, subtitle, options, correct_answer)
       setCurrentQuestion(response.data.question);
       setFeedback('');
+      setFeedbackType('');
       setShowHint(false);
     } catch (error) {
       console.error('문제 로딩 에러:', error);
@@ -51,6 +53,9 @@ function WordQuizModal({ onClose, user }) {
       setFeedback('다시 한 번 생각해볼까요?');
       answerType = 'wrong';
     }
+    // 피드백 유형 상태 업데이트
+    setFeedbackType(answerType);
+
     try {
       // 로그인한 사용자의 id를 함께 보내어 survey_login 테이블 업데이트
       await axios.post(`${API_BASE_URL}/updateAnswer`, { type: answerType, userId: user.id });
@@ -107,29 +112,6 @@ function WordQuizModal({ onClose, user }) {
               
               <p className="mb-2 text-gray-600">{currentQuestion.subtitle}</p>
 
-                    {/* 질문 이미지 (있을 경우) */}
-            {currentQuestion.image_url && (
-              <img 
-                src={currentQuestion.image_url} 
-                alt="question" 
-                className="w-60 h-auto my-4 cursor-pointer"
-                onClick={() => {}}
-              />
-            )}
-              
-              {/* 옵션 버튼 (라디오 버튼 형식 대신 버튼 형태로 처리) */}
-              <div className="flex flex-wrap gap-2 mb-2">
-                {currentQuestion.options.split(',').map(option => (
-                  <button
-                    key={option}
-                    onClick={() => handleAnswer(option)}
-                    className="px-3 py-1 border rounded hover:bg-gray-200 transition"
-                  >
-                    {option}
-                  </button>
-                ))}
-              </div>
-              
               {/* 힌트 보기 버튼 */}
               <button 
                 onClick={toggleHint}
@@ -142,26 +124,58 @@ function WordQuizModal({ onClose, user }) {
                   정답 힌트: {currentQuestion.correct_answer}
                 </div>
               )}
+
+              {/* 질문 이미지 (있을 경우) */}
+              {currentQuestion.image_url && (
+                <img 
+                  src={currentQuestion.image_url} 
+                  alt="question" 
+                  className="w-60 h-auto my-4 cursor-pointer"
+                  onClick={() => {}}
+                />
+              )}
+
+              <p className="bg-black text-white text-center">정답 선택</p><br/>
+
+              {/* 옵션 버튼 (라디오 버튼 형식 대신 버튼 형태로 처리) */}
+              <div className="flex bg-blue-0 flex-wrap gap-2 mb-2">
+                {currentQuestion.options.split(',').map(option => (
+                  <button
+                    key={option}
+                    onClick={() => handleAnswer(option)}
+                    className="px-3 py-1 border rounded bg-blue-100 hover:bg-yellow-200 transition"
+                  >
+                    {option}
+                  </button>
+                ))}
+              </div>
               
-              {feedback && <p className="mt-2 font-bold">{feedback}</p>}
+              {feedback && (
+                <p className={`mt-2 font-bold text-center bg-gray-100 ${feedbackType === 'correct' ? 'text-blue-500' : feedbackType === 'wrong' ? 'text-red-500' : ''}`}>
+                  {feedback}
+                </p>
+              )}
             </div>
             
             <div className="flex justify-between">
+            <button 
+                onClick={() => {
+                  setCurrentQuestion(null);
+                  setFeedback('');
+                  setFeedbackType('');
+                }}
+                className="px-2 py-2 bg-gray-500 text-white rounded hover:bg-gray-600 transition"
+              >
+                선택 메뉴
+              </button>
+
               <button 
                 onClick={fetchRandomQuestion}
                 className="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600 transition"
               >
                 다음
               </button>
-              <button 
-                onClick={() => {
-                  setCurrentQuestion(null);
-                  setFeedback('');
-                }}
-                className="px-4 py-2 bg-gray-500 text-white rounded hover:bg-gray-600 transition"
-              >
-                테이블 선택으로 돌아가기
-              </button>
+
             </div>
           </div>
         )}
