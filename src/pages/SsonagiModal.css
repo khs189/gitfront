@@ -50,6 +50,7 @@
 
 .falling-word {
   position: absolute;
+  white-space: nowrap; /* 단어 줄바꿈 방지 */
   font-size: 18px;
   font-weight: bold;
   transition: top 0.1s linear;

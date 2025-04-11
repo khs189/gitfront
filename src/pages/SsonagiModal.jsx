@@ -13,10 +13,12 @@ const SsonagiModal = ({ onClose, user }) => {
   const [fallingWords, setFallingWords] = useState([]);
   const [input, setInput] = useState('');
   const [score, setScore] = useState(0);
-  const [speed, setSpeed] = useState(1);
+  const [speed, setSpeed] = useState(1); // 낙하 속도
+  const [spawnInterval, setSpawnInterval] = useState(4000); // ✅ 단어 생성 속도(ms)
+  const [matchedInfo, setMatchedInfo] = useState(null); // ✅ 맞춘 단어 정보 저장
   const wordId = useRef(0);
+  const spawnTimerRef = useRef(null); // ✅ clearInterval 용 참조
 
-  // 단어장 선택
   const handleTableSelect = (table) => {
     setSelectedTables(prev =>
       prev.includes(table)
@@ -25,7 +27,6 @@ const SsonagiModal = ({ onClose, user }) => {
     );
   };
 
-  // 게임 시작 전 단어 목록 가져오기
   const startGame = async () => {
     if (selectedTables.length === 0) {
       alert('먼저 단어장을 선택해주세요.');
@@ -35,12 +36,25 @@ const SsonagiModal = ({ onClose, user }) => {
       const response = await axios.post(`${API_BASE_URL}/getWords`, {
         tables: selectedTables,
       });
-      const words = response.data.words.map(word => word.english); // 단어 구조에 맞게 변경
-      setWordList(words);
+
+      const words = response.data.words; // ['host', 'apple', ...]
+      if (words.length === 0) {
+        alert('단어가 없습니다.');
+        return;
+      }
+
+      // words = [{ text: 'host', title: '호스트', subtitle: '서버 담당자' }]
+      const formatted = words.map(word => ({
+        text: typeof word === 'string' ? word : word.text,
+        title: word.title || word.text,
+        subtitle: word.subtitle || '',
+      }));
+
+      setWordList(formatted);
       setGameStarted(true);
     } catch (error) {
-      console.error('단어 불러오기 실패:', error);
-      alert('단어를 불러오는 중 문제가 발생했습니다.');
+      console.error('단어 로딩 실패:', error);
+      alert('단어 로딩 실패');
     }
   };
 
@@ -48,18 +62,19 @@ const SsonagiModal = ({ onClose, user }) => {
   useEffect(() => {
     if (!gameStarted || wordList.length === 0) return;
 
-    const addWordInterval = setInterval(() => {
+    spawnTimerRef.current = setInterval(() => {
+      const random = wordList[Math.floor(Math.random() * wordList.length)];
       const newWord = {
+        ...random,
         id: wordId.current++,
-        text: wordList[Math.floor(Math.random() * wordList.length)],
         top: 0,
-        left: Math.random() * 80 + 10,
+        left: Math.random() * 70,
       };
       setFallingWords(prev => [...prev, newWord]);
-    }, 2000);
+    }, spawnInterval);
 
-    return () => clearInterval(addWordInterval);
-  }, [gameStarted, wordList]);
+    return () => clearInterval(spawnTimerRef.current);
+  }, [gameStarted, wordList, spawnInterval]); // ✅ spawnInterval 반응
 
   // 단어 낙하
   useEffect(() => {
@@ -79,13 +94,20 @@ const SsonagiModal = ({ onClose, user }) => {
     return () => clearInterval(fallInterval);
   }, [gameStarted, speed]);
 
-  // 단어 입력 처리
+  // 입력 처리
   const handleSubmit = () => {
-    const matched = fallingWords.find(w => w.text === input);
+    const normalizedInput = input.trim().toLowerCase(); // ✅ 대소문자 무시
+
+    const matched = fallingWords.find(w => w.text.toLowerCase() === normalizedInput);
+
     if (matched) {
       setFallingWords(prev => prev.filter(w => w.id !== matched.id));
       setScore(prev => prev + 10);
+      setMatchedInfo({ title: matched.title, subtitle: matched.subtitle }); // ✅ info 저장
+    } else {
+      setMatchedInfo(null); // 맞춘 게 없으면 초기화
     }
+
     setInput('');
   };
 
@@ -97,8 +119,9 @@ const SsonagiModal = ({ onClose, user }) => {
   // 난이도 조절
   const increaseSpeed = () => setSpeed(prev => Math.min(prev + 1, 10));
   const decreaseSpeed = () => setSpeed(prev => Math.max(prev - 1, 1));
+  const increaseSpawnRate = () => setSpawnInterval(prev => Math.max(prev - 500, 500)); // ✅ 빠르게 생성
+  const decreaseSpawnRate = () => setSpawnInterval(prev => prev + 500); // ✅ 느리게 생성
 
-  // 게임 리셋
   const handleBackToSelect = () => {
     setGameStarted(false);
     setFallingWords([]);
@@ -106,14 +129,15 @@ const SsonagiModal = ({ onClose, user }) => {
     setSpeed(1);
     setInput('');
     setWordList([]);
+    setMatchedInfo(null);
+    clearInterval(spawnTimerRef.current); // ✅ clear 생성 타이머
   };
 
   return (
     <div className="modal-overlay">
       <div className="modal-content">
 
-        {/* 단어장 선택 화면 */}
-        {!gameStarted && (
+        {!gameStarted ? (
           <>
             <h2 className="text-xl font-bold mb-4">🌧️ 소나기 타자 게임</h2>
             <p className="mb-2">단어장 선택:</p>
@@ -129,34 +153,30 @@ const SsonagiModal = ({ onClose, user }) => {
                 <label htmlFor={table} className="ml-2">{table}</label>
               </div>
             ))}
-            <button
-              className="mt-4 px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600"
-              onClick={startGame}
-            >
-              게임 시작
-            </button>
-            <button
-              className="mt-2 ml-2 text-sm text-red-500"
-              onClick={onClose}
-            >
-              닫기
-            </button>
+            <button className="mt-4 px-4 py-2 bg-blue-500 text-white rounded" onClick={startGame}>게임 시작</button>
+            <button className="mt-2 ml-2 text-sm text-red-500" onClick={onClose}>닫기</button>
           </>
-        )}
-
-        {/* 게임화면 */}
-        {gameStarted && (
+        ) : (
           <>
-            <div className="header">
+            <div className="header flex justify-between items-center">
               <h2>🌧️ 소나기</h2>
-              <div className="speed-control">
-                <button onClick={decreaseSpeed}>－</button>
-                <span>속도: {speed}</span>
-                <button onClick={increaseSpeed}>＋</button>
+              <div className="gap-4">
+                <div className="speed-control">
+                  <span>⬇️ 낙하</span>
+                  <button onClick={decreaseSpeed}>－</button>
+                  <span>{speed}</span>
+                  <button onClick={increaseSpeed}>＋</button>
+                </div>
+                <div className="speed-control">
+                  <span>⏱ 생성:</span>
+                  <button onClick={increaseSpawnRate}>－</button>
+                  <span>{spawnInterval / 1000}s</span>
+                  <button onClick={decreaseSpawnRate}>＋</button>
+                </div>
               </div>
             </div>
 
-            <p>점수: {score}</p>
+            <p className="my-2">점수: {score}</p>
 
             <div className="game-area">
               {fallingWords.map(word => (
@@ -182,7 +202,14 @@ const SsonagiModal = ({ onClose, user }) => {
               <button className="send-button" onClick={handleSubmit}>전송</button>
             </div>
 
-            <div className="flex justify-between">
+            {matchedInfo && (
+              <div className="matched-info mt-2 bg-gray-100 p-2 rounded">
+                <p><strong>📘 뜻:</strong> {matchedInfo.title}</p>
+                <p className="text-sm text-gray-500">{matchedInfo.subtitle}</p>
+              </div>
+            )}
+
+            <div className="flex justify-between mt-4">
               <button className="close-button" onClick={handleBackToSelect}>단어장 선택</button>
               <button className="close-button" onClick={onClose}>종료</button>
             </div>
