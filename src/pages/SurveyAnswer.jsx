@@ -111,15 +111,15 @@ function SurveyAnswer() {
         )}
       </div>
       
-      {/* 질문 이미지 (있을 경우) */}
-      {currentQuestion.image_url && (
-        <img 
-          src={currentQuestion.image_url} 
-          alt="question" 
-          className="w-60 h-auto my-4 cursor-pointer"
-          onClick={() => {}}
-        />
-      )}
+          {currentQuestion.image_url && (
+      <img 
+        src={currentQuestion.image_url} 
+        alt="question" 
+        className="w-60 h-auto my-4 cursor-pointer"
+        onClick={() => {}}
+      />
+    )}
+
       
       {/* radio 유형 */}
       {currentQuestion.response_type === 'radio' && optionsArray.length > 0 && (

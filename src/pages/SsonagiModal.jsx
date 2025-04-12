@@ -176,7 +176,7 @@ const SsonagiModal = ({ onClose, user }) => {
               </div>
             </div>
 
-            <p className="my-2">점수: {score}</p>
+            <p className="my-2 bg-black text-white text-xl font-bold">점수 : {score}</p>
 
             <div className="game-area">
               {fallingWords.map(word => (
@@ -204,7 +204,7 @@ const SsonagiModal = ({ onClose, user }) => {
 
             {matchedInfo && (
               <div className="matched-info mt-2 bg-gray-100 p-2 rounded">
-                <p><strong>📘 뜻:</strong> {matchedInfo.title}</p>
+                <p><strong>📘 예:</strong> {matchedInfo.title}</p>
                 <p className="text-sm text-gray-500">{matchedInfo.subtitle}</p>
               </div>
             )}
